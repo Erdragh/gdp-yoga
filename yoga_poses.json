@@ -1,0 +1,128 @@
+[
+    {
+        "videoId": 1,
+        "name": "Boat",
+        "trainedParts": ["ABDOMEN"],
+        "durationInSeconds": 30
+    },
+    {
+        "videoId": 2,
+        "name": "Bridge",
+        "trainedParts": ["ABDOMEN", "BACK", "HAMSTRINGS"],
+        "durationInSeconds": 24
+    },
+    {
+        "videoId": 3,
+        "name": "Cat",
+        "trainedParts": ["ABDOMEN", "BACK"],
+        "durationInSeconds": 6
+    },
+    {
+        "videoId": 4,
+        "name": "Chair",
+        "trainedParts": ["ABDOMEN", "LEGS", "BACK"],
+        "durationInSeconds": 22
+    },
+    {
+        "videoId": 5,
+        "name": "Cobra",
+        "trainedParts": ["ABDOMEN"],
+        "durationInSeconds": 10
+    },
+    {
+        "videoId": 6,
+        "name": "Cow",
+        "trainedParts": ["ABDOMEN", "BACK"],
+        "durationInSeconds": 6
+    },
+    {
+        "videoId": 7,
+        "name": "Squat",
+        "trainedParts": ["ABDOMEN", "LEGS"],
+        "durationInSeconds": 22
+    },
+    {
+        "videoId": 8,
+        "name": "Happy Baby",
+        "trainedParts": ["ABDOMEN"],
+        "durationInSeconds": 46
+    },
+    {
+        "videoId": 9,
+        "name": "High Lunge",
+        "trainedParts": ["LEGS", "ARMS"],
+        "durationInSeconds": 26
+    },
+    {
+        "videoId": 10,
+        "name": "Forearm Plank",
+        "trainedParts": ["ABDOMEN", "ARMS"],
+        "durationInSeconds": 26
+    },
+    {
+        "videoId": 11,
+        "name": "Downward-Facing Dog",
+        "trainedParts": ["LEGS", "ARMS", "HAMSTRINGS"],
+        "durationInSeconds": 10
+    },
+    {
+        "videoId": 12,
+        "name": "Chaturanga",
+        "trainedParts": ["LEGS", "ARMS", "ABDOMEN", "BACK", "SHOULDERS"],
+        "durationInSeconds": 6
+    },
+    {
+        "videoId": 13,
+        "name": "Handstand",
+        "trainedParts": ["LEGS", "ARMS", "ABDOMEN", "BACK", "SHOULDERS", "HAMSTRINGS"],
+        "durationInSeconds": 16
+    },
+    {
+        "videoId": 14,
+        "name": "Locust",
+        "trainedParts": ["LEGS", "BACK", "SHOULDERS"],
+        "durationInSeconds": 24
+    },
+    {
+        "videoId": 15,
+        "name": "Plank",
+        "trainedParts": ["ARMS", "ABDOMEN", "SHOULDERS"],
+        "durationInSeconds": 18
+    },
+    {
+        "videoId": 16,
+        "name": "Side Plank Pose",
+        "trainedParts": ["ARMS", "ABDOMEN", "BACK", "SHOULDERS"],
+        "durationInSeconds": 20
+    },
+    {
+        "videoId": 17,
+        "name": "Head-to-Knee",
+        "trainedParts": ["LEGS", "HAMSTRINGS"],
+        "durationInSeconds": 10
+    },
+    {
+        "videoId": 18,
+        "name": "Seated Forward Bend",
+        "trainedParts": ["LEGS", "HAMSTRINGS"],
+        "durationInSeconds": 14
+    },
+    {
+        "videoId": 19,
+        "name": "Forward Bend",
+        "trainedParts": ["LEGS", "SHOULDERS", "HAMSTRINGS"],
+        "durationInSeconds": 12
+    },
+    {
+        "videoId": 20,
+        "name": "Warrior 3",
+        "trainedParts": ["LEGS", "ARMS", "ABDOMEN", "BACK", "SHOULDERS"],
+        "durationInSeconds": 32
+    },
+    {
+        "videoId": 21,
+        "name": "Tadasana",
+        "trainedParts": ["LEGS", "ABDOMEN", "BACK"],
+        "durationInSeconds": 8
+    }
+]
