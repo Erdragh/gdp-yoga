@@ -239,12 +239,13 @@ class SessionCompute {
       // skip this transition.
       if (!transition.getFrom().equals(pose)) continue;
 
-      // this is what calculates the best session for the transition. My recursion has
-      // two methods which call each other. The one called here is the other one.
+      // this is what calculates the best session for the transition.
       // I use a clone of the ArrayList here, because I want to use the state it's in before calling this method
       // for the next time we're at this point in the loop. Yes this will create a lot of clones,
       // with a million more on the way, but it works and is quick enough, so I didn't bother.
-      var session = getBestSessionForTransition(transition, (ArrayList<SessionElement>) elementsSoFar.clone());
+      var clonedList = (ArrayList<SessionElement>) elementsSoFar.clone();
+      clonedList.add(transition);
+      var session = getBestSessionForPose(transition.getTo(), clonedList);
 
       // check the length of the session we got.
       int sessionLength = getLengthOfSession(session);
@@ -260,37 +261,6 @@ class SessionCompute {
     // if we're allowed to use memoization we can store the best session for this pose and remaining time
     // in the memoization list for future use.
     if (accelerated) memoizationRecords.add(new MemoizationRecord(pose, remainingTime, bestFoundSessionSoFar));
-    return bestFoundSessionSoFar;
-  }
-
-  /**
-   * A part of the recursive computation process which returns the best
-   * remaining session for a given transition and what the session has been
-   * so far.
-   * @deprecated was from a time, where I thought that one transition could have multiple
-   * destinations. I don't know why I ever thought that, but oh well.
-   * @param transition the given transition that is being used now
-   * @param elementsSoFar the elements so far.
-   * @return the best session for the transition.
-   */
-  private SessionElement[] getBestSessionForTransition(Transition transition, ArrayList<SessionElement> elementsSoFar) {
-    // this basically works the exact same way as the
-    // method for poses, but without the checks for whether
-    // we're finished.
-    elementsSoFar.add(transition);
-    SessionElement[] bestFoundSessionSoFar = new SessionElement[]{};
-    int bestFoundSessionLengthSoFar = 0;
-    for (var pose : poses) {
-      if (!transition.getTo().equals(pose)) continue;
-      var session = getBestSessionForPose(pose, (ArrayList<SessionElement>) elementsSoFar.clone());
-      int sessionLength = getLengthOfSession(session);
-      if (sessionLength == desiredDuration) {
-        return session;
-      } else if (Math.abs(desiredDuration - sessionLength) < Math.abs(desiredDuration - bestFoundSessionLengthSoFar)) {
-        bestFoundSessionLengthSoFar = sessionLength;
-        bestFoundSessionSoFar = session;
-      }
-    }
     return bestFoundSessionSoFar;
   }
 
