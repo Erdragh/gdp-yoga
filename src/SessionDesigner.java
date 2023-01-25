@@ -6,40 +6,66 @@ import yoga.data.Transition;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class SessionDesigner {
+  private static final String USAGE = "Usage: java SessionDesigner <seconds> /path/to/yoga_poses.json /path/to/yoga_transitions.json (-accelerated)";
 
-  private static int desiredDuration = 0;
-
-  private static Pose[] poses;
-  private static Transition[] transitions;
+  private static SessionCompute sessionCompute;
   public static void main(String[] args) {
-    if (args.length != 3) {
-      System.err.println("Usage: java SessionDesigner <seconds> /path/to/yoga_poses.json /path/to/yoga_transitions.json");
+    int desiredDuration = 0;
+    if (args.length < 3) {
+      System.err.println(USAGE);
       return;
     }
     if (args[0].matches("[0-9]+")) {
       desiredDuration = Integer.parseInt(args[0]);
     } else {
-      System.err.println("Usage: java SessionDesigner <seconds> /path/to/yoga_poses.json /path/to/yoga_transitions.json");
+      System.err.println(USAGE);
       return;
     }
 
-    try {
-      poses = Database.importYogaPoses(Path.of(args[1]));
-    } catch (IOException e) {
-      System.err.println("Something went wrong when trying to access " + args[1]);
-    }
-    try {
-      transitions = Database.importYogaTransitions(Path.of(args[2]));
-    } catch (IOException e) {
-      System.err.println("Something went wrong when trying to access " + args[2]);
+    boolean accelerated = false;
+
+    if (args.length > 3) {
+      for (int i = 3; i < args.length; i++) {
+        if (args[i].equals("-accelerated")) accelerated = true;
+      }
     }
 
-    computePoses();
+    sessionCompute = new SessionCompute(desiredDuration, accelerated, args[1], args[2]);
+    sessionCompute.computePoses();
+  }
+}
+
+class SessionCompute {
+
+  private int desiredDuration = 0;
+  private boolean accelerated = false;
+  private List<MemoizationRecord> memoizationRecords = new ArrayList<>();
+  private Pose[] poses;
+  private Transition[] transitions;
+
+  public SessionCompute(int desiredDuration, boolean accelerated, String posesPath, String transitionsPath) {
+    this.desiredDuration = desiredDuration;
+    this.accelerated = accelerated;
+
+    try {
+      poses = Database.importYogaPoses(Path.of(posesPath));
+    } catch (IOException e) {
+      System.err.println("Something went wrong when trying to access " + posesPath);
+    }
+    try {
+      transitions = Database.importYogaTransitions(Path.of(transitionsPath));
+    } catch (IOException e) {
+      System.err.println("Something went wrong when trying to access " + transitionsPath);
+    }
   }
 
-  private static void computePoses() {
+  public void computePoses() {
+    if (poses == null || transitions == null) return;
     SessionElement[] bestFoundSessionSoFar = new SessionElement[]{};
     int bestFoundSessionLengthSoFar = 0;
     for (var pose : poses) {
@@ -57,7 +83,7 @@ public class SessionDesigner {
     printSession(bestFoundSessionSoFar);
   }
 
-  private static SessionElement[] getBestSessionForPose(Pose pose, ArrayList<SessionElement> elementsSoFar) {
+  private SessionElement[] getBestSessionForPose(Pose pose, ArrayList<SessionElement> elementsSoFar) {
     elementsSoFar.add(pose);
     int duration = getLengthOfSession(elementsSoFar.toArray(new SessionElement[0]));
     if (duration == desiredDuration) {
@@ -74,6 +100,18 @@ public class SessionDesigner {
       }
       return elementsSoFar.toArray(new SessionElement[0]);
     }
+
+    // ------------
+
+    int remainingTime = desiredDuration - duration;
+    for (var record : memoizationRecords) {
+      if (record.from().equals(pose) && record.remainingTime() == remainingTime) {
+        return record.bestSession();
+      }
+    }
+
+    // ------------
+
     SessionElement[] bestFoundSessionSoFar = new SessionElement[]{};
     int bestFoundSessionLengthSoFar = 0;
     for (var transition : transitions) {
@@ -87,10 +125,11 @@ public class SessionDesigner {
         bestFoundSessionSoFar = session;
       }
     }
+    memoizationRecords.add(new MemoizationRecord(pose, remainingTime, bestFoundSessionSoFar));
     return bestFoundSessionSoFar;
   }
 
-  private static SessionElement[] getBestSessionForTransition(Transition transition, ArrayList<SessionElement> elementsSoFar) {
+  private SessionElement[] getBestSessionForTransition(Transition transition, ArrayList<SessionElement> elementsSoFar) {
     elementsSoFar.add(transition);
     SessionElement[] bestFoundSessionSoFar = new SessionElement[]{};
     int bestFoundSessionLengthSoFar = 0;
@@ -107,14 +146,14 @@ public class SessionDesigner {
     }
     return bestFoundSessionSoFar;
   }
-  
-  private static int getLengthOfSession(SessionElement[] session) {
+
+  private int getLengthOfSession(SessionElement[] session) {
     int length = 0;
     for (SessionElement e : session) length += e.getDurationInSeconds();
     return length;
   }
 
-  private static void printSession(SessionElement[] session) {
+  private void printSession(SessionElement[] session) {
     for (int i = 0; i < session.length; i++) {
       System.out.print((i + 1) + ". ");
       System.out.println(session[i]);
@@ -122,3 +161,5 @@ public class SessionDesigner {
     System.out.println("Total duration: " + getLengthOfSession(session) + "/" + desiredDuration);
   }
 }
+
+record MemoizationRecord(Pose from, int remainingTime, SessionElement[] bestSession) {}
