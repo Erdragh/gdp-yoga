@@ -36,7 +36,10 @@ public class SessionDesigner {
     }
 
     sessionCompute = new SessionCompute(desiredDuration, accelerated, args[1], args[2]);
+    long then = System.nanoTime();
     sessionCompute.computePoses();
+    long now = System.nanoTime();
+    System.out.println("Duration: " + ((now - then) / 1_000_000_000d) + "s");
   }
 }
 
