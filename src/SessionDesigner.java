@@ -107,9 +107,11 @@ class SessionCompute {
     // ------------
 
     int remainingTime = desiredDuration - duration;
-    for (var record : memoizationRecords) {
-      if (record.from().equals(pose) && record.remainingTime() == remainingTime) {
-        return record.bestSession();
+    if (accelerated) {
+      for (var record : memoizationRecords) {
+        if (record.from().equals(pose) && record.remainingTime() == remainingTime) {
+          return record.bestSession();
+        }
       }
     }
 
@@ -128,7 +130,7 @@ class SessionCompute {
         bestFoundSessionSoFar = session;
       }
     }
-    memoizationRecords.add(new MemoizationRecord(pose, remainingTime, bestFoundSessionSoFar));
+    if (accelerated) memoizationRecords.add(new MemoizationRecord(pose, remainingTime, bestFoundSessionSoFar));
     return bestFoundSessionSoFar;
   }
 
